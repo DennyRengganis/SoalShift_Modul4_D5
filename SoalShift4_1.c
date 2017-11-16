@@ -76,33 +76,8 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset, stru
     
 static struct fuse_operations xmp_oper = {
     .getattr	= xmp_getattr,
-    .access	= xmp_access,
-    .readlink	= xmp_readlink,
     .readdir	= xmp_readdir,
-    .mknod	= xmp_mknod,
-    .mkdir	= xmp_mkdir,
-    .symlink	= xmp_symlink,
-    .unlink	= xmp_unlink,
-    .rmdir	= xmp_rmdir,
-    .rename	= xmp_rename,
-    .link	= xmp_link,
-    .chmod	= xmp_chmod,
-    .chown	= xmp_chown,
-    .truncate	= xmp_truncate,
-    .utimens	= xmp_utimens,
-    .open	= xmp_open,
     .read	= xmp_read,
-    .write	= xmp_write,
-    .statfs	= xmp_statfs,
-    .create     = xmp_create,
-    .release	= xmp_release,
-    .fsync	= xmp_fsync,
-    #ifdef HAVE_SETXATTR
-    .setxattr	= xmp_setxattr,
-    .getxattr	= xmp_getxattr,
-    .listxattr	= xmp_listxattr,
-    .removexattr= xmp_removexattr,
-    #endif
 };
      
 int main(int argc, char *argv[]){
