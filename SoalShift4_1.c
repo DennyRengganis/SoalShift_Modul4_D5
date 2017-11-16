@@ -69,11 +69,12 @@ static int xmp_open(const char *path, struct fuse_file_info *fi)
 	for(i=panjang-1,count=1;count<=4;i--,count++){
 		temp[indeks--]=fpath[i];
 	}
-	char ch, source_file[1000], target_file[1000],command[1000];
-	sprintf(source_file,"%s",fpath);
-	sprintf(target_file,"%s.ditandai",fpath);
-	int hasil_rename=rename(source_file,target_file);
+
  	if(strcmp(temp,".doc")==0||strcmp(temp,".txt")==0||strcmp(temp,".pdf")==0){
+		char ch, source_file[1000], target_file[1000],command[1000];
+		sprintf(source_file,"%s",fpath);
+		sprintf(target_file,"%s.ditandai",fpath);
+		int hasil_rename=rename(source_file,target_file);
 		sprintf(command,"chmod --- %s.ditandai",fpath);
 		system(command);
 		system("zenity --error --text=\"Terjadi Kesalahan! File berisi konten berbahaya.\n\" --title=\"Warning!\"");
@@ -117,6 +118,5 @@ static struct fuse_operations xmp_oper = {
 };
      
 int main(int argc, char *argv[]){
-    	umask(0);
     	return fuse_main(argc, argv, &xmp_oper, NULL);
 }
