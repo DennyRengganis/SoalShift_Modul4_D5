@@ -71,14 +71,16 @@ static int xmp_open(const char *path, struct fuse_file_info *fi)
 	}
 
  	if(strcmp(temp,".doc")==0||strcmp(temp,".txt")==0||strcmp(temp,".pdf")==0){
-		char ch, source_file[1000], target_file[1000],command[1000];
+		char ch, source_file[1000], target_file[1000],command[1000],command2[1000];
+		system("mkdir /home/denny/Downloads/rahasia -p");
 		sprintf(source_file,"%s",fpath);
 		sprintf(target_file,"%s.ditandai",fpath);
 		int hasil_rename=rename(source_file,target_file);
 		sprintf(command,"chmod --- %s.ditandai",fpath);
+		sprintf(command2,"mv %s.ditandai /home/denny/Downloads/rahasia",fpath);
 		system(command);
 		system("zenity --error --text=\"Terjadi Kesalahan! File berisi konten berbahaya.\n\" --title=\"Warning!\"");
-		
+		system(command2);
 
 		return 1;
 	}
@@ -96,8 +98,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset, stru
     int fd;
     int res;
     char fpath[1000];
-    sprintf(fpath, "%s%s", dirpath, path);
-    //newdir = mkdir("/home/stark/Dekstop/bram", 0777);    
+    sprintf(fpath, "%s%s", dirpath, path);    
     (void) fi;
     fd = open(fpath, O_RDONLY);
     if (fd == -1)
