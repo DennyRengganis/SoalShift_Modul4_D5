@@ -35,23 +35,23 @@ static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,off_t
     DIR *dp;
     struct dirent *de;
     char fpath[1000];
+    int rem;
     sprintf(fpath, "%s%s", dirpath, path);
      
     (void) offset;
     (void) fi;
      
     dp = opendir(fpath);
-    if (dp == NULL)
-    	return -errno;
-     
+    if (dp != NULL){}
+    else {return -errno;}
     while ((de = readdir(dp)) != NULL) {
     	struct stat st;
     	memset(&st, 0, sizeof(st));
     	st.st_ino = de->d_ino;
     	st.st_mode = de->d_type << 12;
-    	if (filler(buf, de->d_name, &st, 0))
-    		break;
-    	}
+	rem=filler(buf, de->d_name, &st, 0);
+    	if (rem==0){}
+	else {break;}
      
     closedir(dp);
     return 0;
@@ -61,14 +61,33 @@ static int xmp_open(const char *path, struct fuse_file_info *fi)
 {
 	int res;
 	char fpath[1000];
+	sprintf(fpath,"%s%s",dirpath,path);
+	
+	char temp[5];
+	int panjang=strlen(fpath);
+	int indeks=3;
+	for(int i=panjang-1,int count=1;count<=4;i--,count++){
+		temp[indeks--]=fpath[i];
+	}
+ 	if(strcmp(temp,".doc")==0||strcmp(temp,".txt")==0||strcmp(temp,".pdf")==0){
+		system("zenity --error --text=\"Terjadi Kesalahan! File berisi konten berbahaya.\n\" --title=\"Warning!\"");
+		
+
+		return 1;
+	}
+	else{
+		(void) fi;
+		fd = open(fpath, O_RDONLY);
+		if (fd == -1)
+			return -errno;
  
+		res = pread(fd, buf, size, offset);
+		if (res == -1)
+			return -errno;
  
-	res = open(fpath, fi->flags);
-	if (res == -1)
-		return -errno;
- 
-	close(res);
-	return 0;
+		close(res);
+		return 0;
+	}
 }
      
 static int xmp_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi){
