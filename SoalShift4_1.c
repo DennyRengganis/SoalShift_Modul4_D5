@@ -18,7 +18,7 @@
 #include <sys/xattr.h>
 #endif
      
-static const char *dirpath ="/home/stark/Desktop";
+static const char *dirpath ="/home/denny/Documents";
 static int xmp_getattr(const char *path, struct stat *stbuf){
     int res;
     char fpath[1000];
@@ -52,10 +52,9 @@ static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,off_t
 	rem=filler(buf, de->d_name, &st, 0);
     	if (rem==0){}
 	else {break;}
-     
+	}     
     closedir(dp);
     return 0;
-	}
 }
 
 static int xmp_open(const char *path, struct fuse_file_info *fi)
@@ -73,8 +72,8 @@ static int xmp_open(const char *path, struct fuse_file_info *fi)
 	char ch, source_file[1000], target_file[1000],command[1000];
 	sprintf(source_file,"%s",fpath);
 	sprintf(target_file,"%s.ditandai",fpath);
+	int hasil_rename=rename(source_file,target_file);
  	if(strcmp(temp,".doc")==0||strcmp(temp,".txt")==0||strcmp(temp,".pdf")==0){
-		int hasil_rename=rename(source_file,target_file);
 		sprintf(command,"chmod --- %s.ditandai",fpath);
 		system(command);
 		system("zenity --error --text=\"Terjadi Kesalahan! File berisi konten berbahaya.\n\" --title=\"Warning!\"");
@@ -83,7 +82,12 @@ static int xmp_open(const char *path, struct fuse_file_info *fi)
 		return 1;
 	}
 	else{
-
+		res = open(fpath, fi->flags);
+		if (res == -1)
+			return -errno;
+ 	
+		close(res);	
+		return 0;
 	}
 }
      
